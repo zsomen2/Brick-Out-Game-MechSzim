@@ -12,6 +12,7 @@ from bricks import Bricks
 SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720  # standard HD resolution
 LEFT_BORDER, RIGHT_BORDER = 0, SCREEN_WIDTH
 TOP_BORDER, BOTTOM_BORDER = 0, SCREEN_HEIGHT
+FONT_SIZE = 36
 BALL_RADIUS = 20
 BALL_SPEED = 5
 PADDLE_WIDTH = 150
@@ -38,7 +39,7 @@ state = STATE_INIT
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("rogfonts", 36)
+font = pygame.font.SysFont("rogfonts", FONT_SIZE)
 
 # GAME LOOP
 while True:
