@@ -16,12 +16,12 @@ class Ball:
         draw(screen, color): Renders the ball as a circle.
     """
 
-    def __init__(self, x, y, r, vx, vy):
+    def __init__(self, x, y, r, dx, dy):
         # tracking the ball's position with a rectangle
         # to simplify collision detection
         self.rect = pygame.Rect(x - r/2, y - r/2, r, r) 
-        self.dx = vx
-        self.dy = vy
+        self.dx = dx
+        self.dy = dy
 
     def move(self, LEFT_BORDER, RIGHT_BORDER, TOP_BORDER):
         self.rect.x += self.dx
