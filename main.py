@@ -73,6 +73,11 @@ while True:
             # Check for collisions
             if ball.rect.colliderect(paddle.rect):
                 ball.dy *= -1
+                ball.dx += paddle.dx * 0.125
+
+                # ensure the ball doesn't get stuck in the paddle
+                if ball.rect.bottom >= paddle.rect.top:
+                    ball.rect.bottom = paddle.rect.top
 
             if bricks.check_collision(ball.rect):
                 ball.dy *= -1
@@ -100,7 +105,7 @@ while True:
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             if state == STATE_INIT:
-                ball.dx = BALL_SPEED
+                ball.dx = 0
                 ball.dy = -BALL_SPEED
                 state = STATE_RUNNING
 
