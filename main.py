@@ -6,7 +6,7 @@ import pygame
 import sys
 from ball import Ball
 from paddle import Paddle
-from bricks import create_bricks, draw_bricks
+from bricks import Bricks
 
 # Define constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720  # standard HD resolution
@@ -17,11 +17,15 @@ BALL_SPEED = 5
 PADDLE_WIDTH = 150
 PADDLE_HEIGHT = 16
 PADDLE_SPEED = 8
+BRICK_SIZE = 30
+BRICK_ROWS = 4
+BRICK_COLUMNS = 36
 
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (113, 121, 126)
+RED = (255, 0, 0)
 
 # States
 STATE_INIT = "init"
@@ -55,7 +59,7 @@ while True:
                             PADDLE_HEIGHT,
                             PADDLE_SPEED)
 
-            bricks = create_bricks(4, 30)
+            bricks = Bricks(BRICK_ROWS, BRICK_COLUMNS, BRICK_SIZE, RED)
             
             text = font.render("Press SPACE to start", True, WHITE)
             screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
@@ -69,11 +73,8 @@ while True:
             if ball.rect.colliderect(paddle.rect):
                 ball.dy *= -1
 
-            for brick in bricks:
-                if ball.rect.colliderect(brick):
-                    ball.dy *= -1
-                    bricks.remove(brick)
-                    break
+            if bricks.check_collision(ball.rect):
+                ball.dy *= -1
 
             # Check for game over condition
             if ball.rect.bottom >= BOTTOM_BORDER:
@@ -120,7 +121,7 @@ while True:
     # Render game objects
     ball.draw(screen, WHITE)
     paddle.draw(screen, GRAY)
-    draw_bricks(screen, bricks)
+    bricks.draw(screen)
 
     pygame.display.flip()
     clock.tick(60)
