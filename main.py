@@ -13,6 +13,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720  # standard HD resolution
 LEFT_BORDER, RIGHT_BORDER = 0, SCREEN_WIDTH
 TOP_BORDER, BOTTOM_BORDER = 0, SCREEN_HEIGHT
 BALL_RADIUS = 20
+BALL_SPEED = 5
 PADDLE_WIDTH = 150
 PADDLE_HEIGHT = 16
 PADDLE_SPEED = 8
@@ -37,6 +38,8 @@ font = pygame.font.SysFont("rogfonts", 36)
 
 # GAME LOOP
 while True:
+    screen.fill(BLACK)
+
     # State machine
     match state:
         case "init":
@@ -55,7 +58,8 @@ while True:
             bricks = create_bricks(4, 30)
             
             text = font.render("Press SPACE to start", True, WHITE)
-            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
+            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
+                               SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
         case "running":
             ball.move(LEFT_BORDER, RIGHT_BORDER, TOP_BORDER)
@@ -77,11 +81,13 @@ while True:
 
         case "paused":
             text = font.render("PAUSED", True, WHITE)
-            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
+            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
+                               SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
         case "game_over":
             text = font.render("GAME OVER", True, WHITE)
-            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
+            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
+                               SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
     # Handle events
     keys = pygame.key.get_pressed()
@@ -92,8 +98,8 @@ while True:
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             if state == STATE_INIT:
-                ball.dx = 5
-                ball.dy = -5
+                ball.dx = BALL_SPEED
+                ball.dy = -BALL_SPEED
                 state = STATE_RUNNING
 
             elif state == STATE_RUNNING:
@@ -112,7 +118,6 @@ while True:
                 state = STATE_INIT
 
     # Render game objects
-    screen.fill(BLACK)
     ball.draw(screen, WHITE)
     paddle.draw(screen, GRAY)
     draw_bricks(screen, bricks)
