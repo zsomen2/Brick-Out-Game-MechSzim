@@ -4,9 +4,11 @@
 
 import pygame
 import sys
+import random
 from ball import Ball
 from paddle import Paddle
 from bricks import Bricks
+from drops import Powerup
 
 # Define constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720  # standard HD resolution
@@ -21,6 +23,8 @@ PADDLE_SPEED = 8
 BRICK_SIZE = 30
 BRICK_ROWS = 4
 BRICK_COLUMNS = 36
+DROP_RATE = 0.2
+DROP_FALL_SPEED = 5
 
 # Colors
 BLACK = (0, 0, 0)
@@ -40,6 +44,7 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("rogfonts", FONT_SIZE)
+powerups = []
 
 # GAME LOOP
 while True:
@@ -62,6 +67,8 @@ while True:
 
             bricks = Bricks(BRICK_ROWS, BRICK_COLUMNS, BRICK_SIZE, RED)
             
+            powerups.clear()
+            
             text = font.render("Press SPACE to start", True, WHITE)
             screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
                                SCREEN_HEIGHT // 2 - text.get_height() // 2))
@@ -75,12 +82,26 @@ while True:
                 ball.dy *= -1
                 ball.dx += paddle.dx * 0.125
 
-                # ensure the ball doesn't get stuck in the paddle
+                # Ensure the ball doesn't get stuck in the paddle
                 if ball.rect.bottom >= paddle.rect.top:
                     ball.rect.bottom = paddle.rect.top
 
             if bricks.check_collision(ball.rect):
                 ball.dy *= -1
+                if random.random() < DROP_RATE:
+                    powerups.append(Powerup.spawn_powerup(ball.rect.x,
+                                                          ball.rect.y,
+                                                          DROP_FALL_SPEED))
+
+            for drop in powerups[:]:
+                drop.fall()
+                drop.draw(screen)
+                
+                if drop.rect.colliderect(paddle.rect):
+                    drop.apply(ball, paddle)
+                    powerups.remove(drop)
+                elif drop.rect.top > SCREEN_HEIGHT:
+                    powerups.remove(drop)
 
             # Check for game over condition
             if ball.rect.bottom >= BOTTOM_BORDER:
@@ -105,7 +126,7 @@ while True:
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             if state == STATE_INIT:
-                ball.dx = 0
+                ball.dx = BALL_SPEED
                 ball.dy = -BALL_SPEED
                 state = STATE_RUNNING
 
@@ -124,7 +145,7 @@ while True:
             elif state == STATE_GAME_OVER:
                 state = STATE_INIT
 
-    # Render game objects
+    # Render display objects
     ball.draw(screen, WHITE)
     paddle.draw(screen, GRAY)
     bricks.draw(screen)
