@@ -22,6 +22,7 @@ class Paddle:
         self.dx = 0
 
     def move(self, keys, LEFT_BORDER, RIGHT_BORDER):
+        self.dx = 0 # reset tracking variable
         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.rect.left > LEFT_BORDER:
             self.rect.x -= self.speed
             self.dx = -self.speed
