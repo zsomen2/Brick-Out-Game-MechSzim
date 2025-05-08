@@ -7,6 +7,11 @@ class Powerup:
 
     Types of powerups:
         ball_speed_up: Increases the speed of the ball.
+        ball_slow_down: Decreases the speed of the ball.
+        paddle_speed_up: Increases the speed of the paddle.
+        paddle_slow_down: Decreases the speed of the paddle.
+        paddle_wide: Increases the width of the paddle.
+        paddle_narrow: Decreases the width of the paddle.
 
     Attributes:
         x (int): x-coordinate of the drop's top-left corner
