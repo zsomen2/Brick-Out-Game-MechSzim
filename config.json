@@ -1,0 +1,28 @@
+{
+    "SCREEN_WIDTH": 1280,
+    "SCREEN_HEIGHT": 720,
+    "FONT_SIZE": 36,
+    "BALL_RADIUS": 20,
+    "BALL_SPEED": 5,
+    "PADDLE_WIDTH": 150,
+    "PADDLE_HEIGHT": 16,
+    "PADDLE_SPEED": 10,
+    "BRICK_SIZE": 30,
+    "BRICK_ROWS": 4,
+    "BRICK_COLUMNS": 36,
+    "DROP_RATE": 0.2,
+    "DROP_FALL_SPEED": 3,
+
+    "COLORS": {
+        "BLACK": [0, 0, 0],
+        "WHITE": [255, 255, 255],
+        "GRAY": [113, 121, 126],
+        "RED": [255, 0, 0],
+        "ORANGE": [255, 165, 0],
+        "GREEN": [0, 255, 0],
+        "BLUE": [0, 0, 255],
+        "YELLOW": [255, 255, 0],
+        "MAGENTA": [255, 0, 255],
+        "CYAN": [0, 255, 255]
+    }
+}

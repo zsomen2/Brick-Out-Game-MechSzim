@@ -1,5 +1,6 @@
 import pygame
 import random
+import config
 
 class Powerup:
     """
@@ -32,19 +33,19 @@ class Powerup:
         self.type = type
         match type:
             case 'ball_speed_up':
-                self.color = (255, 0, 0)
+                self.color = config.COLORS['GREEN']
             case 'ball_slow_down':
-                self.color = (0, 255, 0)
+                self.color = config.COLORS['RED']
             case 'paddle_speed_up':
-                self.color = (0, 0, 255)
+                self.color = config.COLORS['CYAN']
             case 'paddle_slow_down':
-                self.color = (255, 255, 0)
+                self.color = config.COLORS['BLUE']
             case 'paddle_grow':
-                self.color = (255, 0, 255)
+                self.color = config.COLORS['MAGENTA']
             case 'paddle_shrink':
-                self.color = (0, 255, 255)
+                self.color = config.COLORS['YELLOW']
             case 'fireball':
-                self.color = (255, 165, 0)
+                self.color = config.COLORS['ORANGE']
 
     def apply(self, ball, paddle):
         # apply the powerup
@@ -85,9 +86,6 @@ class Powerup:
                          'paddle_grow',
                          'paddle_shrink',
                          'fireball']
-        
-        #TEST
-        powerup_types = ['fireball']
 
         type = random.choice(powerup_types)
 

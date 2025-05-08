@@ -4,33 +4,12 @@
 
 import pygame
 import sys
+import config
 import random
 from ball import Ball
 from paddle import Paddle
 from bricks import Bricks
 from drops import Powerup
-
-# Define constants
-SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720  # standard HD resolution
-LEFT_BORDER, RIGHT_BORDER = 0, SCREEN_WIDTH
-TOP_BORDER, BOTTOM_BORDER = 0, SCREEN_HEIGHT
-FONT_SIZE = 36
-BALL_RADIUS = 20
-BALL_SPEED = 5
-PADDLE_WIDTH = 150
-PADDLE_HEIGHT = 16
-PADDLE_SPEED = 8
-BRICK_SIZE = 30
-BRICK_ROWS = 4
-BRICK_COLUMNS = 36
-DROP_RATE = 0.2
-DROP_FALL_SPEED = 5
-
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GRAY = (113, 121, 126)
-RED = (255, 0, 0)
 
 # States
 STATE_INIT = "init"
@@ -39,59 +18,68 @@ STATE_PAUSED = "paused"
 STATE_GAME_OVER = "game_over"
 state = STATE_INIT
 
+# Load configuration
+if not config.load_config():
+    print("Failed to load configuration.")
+    sys.exit()
+
 # Initialize pygame
 pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("rogfonts", FONT_SIZE)
+font = pygame.font.SysFont("rogfonts", config.FONT_SIZE)
 powerups = []
 
 # GAME LOOP
 while True:
-    screen.fill(BLACK)
+    screen.fill(config.COLORS['BLACK'])
+    text = None
 
     # State machine
     match state:
         case "init":
             # Initialize game objects
-            ball = Ball(SCREEN_WIDTH/2,
-                        SCREEN_HEIGHT - PADDLE_HEIGHT - 20 - BALL_RADIUS/2,
-                        BALL_RADIUS,
-                        0, 0)
+            ball = Ball(config.SCREEN_WIDTH/2,
+                        config.SCREEN_HEIGHT - config.PADDLE_HEIGHT - 20 - config.BALL_RADIUS/2,
+                        config.BALL_RADIUS,
+                        0, 0,
+                        config.COLORS['WHITE'])
 
-            paddle = Paddle(SCREEN_WIDTH/2 - PADDLE_WIDTH/2,
-                            SCREEN_HEIGHT - PADDLE_HEIGHT - 20,
-                            PADDLE_WIDTH,
-                            PADDLE_HEIGHT,
-                            PADDLE_SPEED)
+            paddle = Paddle(config.SCREEN_WIDTH/2 - config.PADDLE_WIDTH/2,
+                            config.SCREEN_HEIGHT - config.PADDLE_HEIGHT - 20,
+                            config.PADDLE_WIDTH,
+                            config.PADDLE_HEIGHT,
+                            config.PADDLE_SPEED)
 
-            bricks = Bricks(BRICK_ROWS, BRICK_COLUMNS, BRICK_SIZE, RED)
+            bricks = Bricks(config.BRICK_ROWS,
+                            config.BRICK_COLUMNS,
+                            config.BRICK_SIZE,
+                            config.COLORS['RED'])
             
             powerups.clear()
             
-            text = font.render("Press SPACE to start", True, WHITE)
-            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
-                               SCREEN_HEIGHT // 2 - text.get_height() // 2))
+            text = "Press SPACE to start"
 
         case "running":
-            ball.move(LEFT_BORDER, RIGHT_BORDER, TOP_BORDER)
-            paddle.move(keys, LEFT_BORDER, RIGHT_BORDER)
+            ball.move(config.LEFT_BORDER, config.RIGHT_BORDER, config.TOP_BORDER)
+            paddle.move(keys, config.LEFT_BORDER, config.RIGHT_BORDER)
 
             # Check for collisions
             if ball.rect.colliderect(paddle.rect):
                 ball.dy *= -1
-                ball.dx += paddle.dx * 0.125
+                ball.dx += paddle.dx * 0.1
 
                 # Ensure the ball doesn't get stuck in the paddle
                 if ball.rect.bottom >= paddle.rect.top:
                     ball.rect.bottom = paddle.rect.top
 
             if bricks.check_collision(ball.rect):
-                ball.dy *= -1
-                if random.random() < DROP_RATE:
+                if not ball.fireball_mode:
+                    ball.dy *= -1
+                if random.random() < config.DROP_RATE:
                     powerups.append(Powerup.spawn_powerup(ball.rect.x,
                                                           ball.rect.y,
-                                                          DROP_FALL_SPEED))
+                                                          config.DROP_FALL_SPEED))
 
             for drop in powerups[:]:
                 drop.fall()
@@ -100,22 +88,18 @@ while True:
                 if drop.rect.colliderect(paddle.rect):
                     drop.apply(ball, paddle)
                     powerups.remove(drop)
-                elif drop.rect.top > SCREEN_HEIGHT:
+                elif drop.rect.top > config.SCREEN_HEIGHT:
                     powerups.remove(drop)
 
             # Check for game over condition
-            if ball.rect.bottom >= BOTTOM_BORDER:
+            if ball.rect.bottom >= config.BOTTOM_BORDER:
                 state = STATE_GAME_OVER
 
         case "paused":
-            text = font.render("PAUSED", True, WHITE)
-            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
-                               SCREEN_HEIGHT // 2 - text.get_height() // 2))
+            text = "PAUSED"
 
         case "game_over":
-            text = font.render("GAME OVER", True, WHITE)
-            screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2,
-                               SCREEN_HEIGHT // 2 - text.get_height() // 2))
+            text = "GAME OVER"
 
     # Handle events
     keys = pygame.key.get_pressed()
@@ -126,8 +110,8 @@ while True:
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             if state == STATE_INIT:
-                ball.dx = BALL_SPEED
-                ball.dy = -BALL_SPEED
+                ball.dx = config.BALL_SPEED
+                ball.dy = -config.BALL_SPEED
                 state = STATE_RUNNING
 
             elif state == STATE_RUNNING:
@@ -146,9 +130,13 @@ while True:
                 state = STATE_INIT
 
     # Render display objects
-    ball.draw(screen, WHITE)
-    paddle.draw(screen, GRAY)
+    ball.draw(screen)
+    paddle.draw(screen, config.COLORS['GRAY'])
     bricks.draw(screen)
+    if text:
+        text = font.render(text, True, config.COLORS['WHITE'])
+        screen.blit(text, (config.SCREEN_WIDTH // 2 - text.get_width() // 2,
+                           config.SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
     pygame.display.flip()
     clock.tick(60)
