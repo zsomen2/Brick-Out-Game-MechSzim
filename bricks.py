@@ -8,7 +8,7 @@ class Bricks:
         rows (int): number of rows
         cols (int): number of columns
         size (int): size of each brick
-        color (tuple): brick color
+        color (tuple): RGB color of the bricks
         padding (int): padding between bricks
         x_offset (int): x offset for positioning the first brick
         y_offset (int): y offset for positioning the first brick
