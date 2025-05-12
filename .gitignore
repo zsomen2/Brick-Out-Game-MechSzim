@@ -1,0 +1,6 @@
+# python compilation files
+__pycache__/
+
+# documentation files
+*.pdf
+*.docx
