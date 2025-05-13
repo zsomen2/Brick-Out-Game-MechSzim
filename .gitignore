@@ -4,3 +4,8 @@ __pycache__/
 # documentation files
 *.pdf
 *.docx
+
+# pyinstaller files
+*.spec
+build/
+dist/

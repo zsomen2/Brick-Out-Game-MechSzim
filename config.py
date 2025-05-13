@@ -1,7 +1,17 @@
 import json
+import sys
+import os
 
 # Config file path
-CONFIG_PATH = "./config.json"
+if getattr(sys, 'frozen', False):
+    # Running as a bundled executable
+    app_path = os.path.dirname(sys.executable)
+    CONFIG_PATH = os.path.join(app_path, 'config.json')
+    if not os.path.exists(CONFIG_PATH):
+        CONFIG_PATH = os.path.join(sys._MEIPASS, 'config.json')
+else:
+    # Running as script
+    CONFIG_PATH = "./config.json"
 
 def load_config():
     """
