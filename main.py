@@ -32,7 +32,6 @@ font = pygame.font.SysFont("rogfonts", config.FONT_SIZE)
 falling_powerups = []
 active_powerups = []
 
-
 # GAME LOOP
 while True:
     text = None

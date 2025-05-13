@@ -34,17 +34,17 @@ class Powerup:
         self.duration = duration * config.FRAME_RATE
         match type:
             case 'ball_speed_up':
-                self.color = config.COLORS['GREEN']
+                self.color = config.COLORS['MAGENTA']
             case 'ball_slow_down':
-                self.color = config.COLORS['RED']
+                self.color = config.COLORS['YELLOW']
             case 'paddle_speed_up':
                 self.color = config.COLORS['CYAN']
             case 'paddle_slow_down':
                 self.color = config.COLORS['BLUE']
             case 'paddle_grow':
-                self.color = config.COLORS['MAGENTA']
+                self.color = config.COLORS['GREEN']
             case 'paddle_shrink':
-                self.color = config.COLORS['YELLOW']
+                self.color = config.COLORS['RED']
             case 'fireball':
                 self.color = config.COLORS['ORANGE']
 
@@ -126,4 +126,4 @@ class Powerup:
         self.rect.y += self.speed
 
     def draw(self, screen):
-        pygame.draw.ellipse(screen, self.color, self.rect)
+        pygame.draw.rect(screen, self.color, self.rect)
