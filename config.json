@@ -1,6 +1,7 @@
 {
     "SCREEN_WIDTH": 1280,
     "SCREEN_HEIGHT": 720,
+    "FRAME_RATE": 60,
     "FONT_SIZE": 36,
     "BALL_RADIUS": 20,
     "BALL_SPEED": 5,
@@ -12,6 +13,7 @@
     "BRICK_COLUMNS": 36,
     "DROP_RATE": 0.2,
     "DROP_FALL_SPEED": 3,
+    "POWERUP_DURATION": 5,
 
     "COLORS": {
         "BLACK": [0, 0, 0],

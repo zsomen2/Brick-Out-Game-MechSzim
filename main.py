@@ -16,6 +16,7 @@ STATE_INIT = "init"
 STATE_RUNNING = "running"
 STATE_PAUSED = "paused"
 STATE_GAME_OVER = "game_over"
+STATE_WIN = "win"
 state = STATE_INIT
 
 # Load configuration
@@ -28,11 +29,12 @@ pygame.init()
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("rogfonts", config.FONT_SIZE)
-powerups = []
+falling_powerups = []
+active_powerups = []
+
 
 # GAME LOOP
 while True:
-    screen.fill(config.COLORS['BLACK'])
     text = None
 
     # State machine
@@ -56,7 +58,8 @@ while True:
                             config.BRICK_SIZE,
                             config.COLORS['RED'])
             
-            powerups.clear()
+            falling_powerups.clear()
+            active_powerups.clear()
             
             text = "Press SPACE to start"
 
@@ -74,32 +77,47 @@ while True:
                     ball.rect.bottom = paddle.rect.top
 
             if bricks.check_collision(ball.rect):
-                if not ball.fireball_mode:
+                if not any(buff.type == 'fireball' for buff in active_powerups):
                     ball.dy *= -1
+
                 if random.random() < config.DROP_RATE:
-                    powerups.append(Powerup.spawn_powerup(ball.rect.x,
+                    falling_powerups.append(Powerup.spawn_powerup(ball.rect.x,
                                                           ball.rect.y,
                                                           config.DROP_FALL_SPEED))
 
-            for drop in powerups[:]:
+            for drop in falling_powerups[:]:
                 drop.fall()
-                drop.draw(screen)
                 
                 if drop.rect.colliderect(paddle.rect):
                     drop.apply(ball, paddle)
-                    powerups.remove(drop)
+                    active_powerups.append(drop)
+                    falling_powerups.remove(drop)
                 elif drop.rect.top > config.SCREEN_HEIGHT:
-                    powerups.remove(drop)
+                    falling_powerups.remove(drop)
+
+            # Clean expired powerups
+            for buff in active_powerups[:]:
+                buff.duration -= 1
+                if buff.duration <= 0:
+                    active_powerups.remove(buff)
+                    Powerup.clean(buff.type, ball, paddle, active_powerups)
 
             # Check for game over condition
             if ball.rect.bottom >= config.BOTTOM_BORDER:
                 state = STATE_GAME_OVER
+
+            # Check for win condition
+            if not bricks.grid:
+                state = STATE_WIN
 
         case "paused":
             text = "PAUSED"
 
         case "game_over":
             text = "GAME OVER"
+
+        case "win":
+            text = "LEVEL COMPLETE"
 
     # Handle events
     keys = pygame.key.get_pressed()
@@ -126,17 +144,20 @@ while True:
                 ball.dy = saved_dy
                 state = STATE_RUNNING
 
-            elif state == STATE_GAME_OVER:
+            elif state == STATE_GAME_OVER or state == STATE_WIN:
                 state = STATE_INIT
 
     # Render display objects
+    screen.fill(config.COLORS['BLACK'])
     ball.draw(screen)
     paddle.draw(screen, config.COLORS['GRAY'])
     bricks.draw(screen)
+    for drop in falling_powerups[:]:
+        drop.draw(screen)
     if text:
         text = font.render(text, True, config.COLORS['WHITE'])
         screen.blit(text, (config.SCREEN_WIDTH // 2 - text.get_width() // 2,
                            config.SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(config.FRAME_RATE)

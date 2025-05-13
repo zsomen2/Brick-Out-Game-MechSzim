@@ -14,11 +14,13 @@ def load_config():
     global SCREEN_WIDTH, SCREEN_HEIGHT
     global LEFT_BORDER, RIGHT_BORDER
     global TOP_BORDER, BOTTOM_BORDER
+    global FRAME_RATE
     global FONT_SIZE
     global BALL_RADIUS, BALL_SPEED
     global PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED
     global BRICK_SIZE, BRICK_ROWS, BRICK_COLUMNS
     global DROP_RATE, DROP_FALL_SPEED
+    global POWERUP_DURATION
     global COLORS
 
     try:
@@ -33,6 +35,9 @@ def load_config():
     LEFT_BORDER, RIGHT_BORDER = 0, SCREEN_WIDTH
     TOP_BORDER, BOTTOM_BORDER = 0, SCREEN_HEIGHT
 
+    # Obtain frame rate
+    FRAME_RATE = config['FRAME_RATE']
+
     # Load constants
     FONT_SIZE = config['FONT_SIZE']
     BALL_RADIUS = config['BALL_RADIUS']
@@ -45,6 +50,7 @@ def load_config():
     BRICK_COLUMNS = config['BRICK_COLUMNS']
     DROP_RATE = config['DROP_RATE']
     DROP_FALL_SPEED = config['DROP_FALL_SPEED']
+    POWERUP_DURATION = config['POWERUP_DURATION']
 
     # Assign colors
     COLORS = {k: tuple(v) for k, v in config['COLORS'].items()}

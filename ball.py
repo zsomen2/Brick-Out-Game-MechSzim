@@ -24,7 +24,6 @@ class Ball:
         self.dx = dx
         self.dy = dy
         self.color = color
-        self.fireball_mode = False
 
     def move(self, LEFT_BORDER, RIGHT_BORDER, TOP_BORDER):
         self.rect.x += self.dx
