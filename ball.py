@@ -30,9 +30,14 @@ class Ball:
         self.rect.y += self.dy
 
         # bouncing off left, right and top walls
-        if self.rect.left <= LEFT_BORDER or self.rect.right >= RIGHT_BORDER:
+        if self.rect.left <= LEFT_BORDER:
+            self.rect.left = LEFT_BORDER
+            self.dx *= -1
+        if self.rect.right >= RIGHT_BORDER:
+            self.rect.right = RIGHT_BORDER
             self.dx *= -1
         if self.rect.top <= TOP_BORDER:
+            self.rect.top = TOP_BORDER
             self.dy *= -1
 
     def draw(self, screen):
